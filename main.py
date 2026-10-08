@@ -1012,17 +1012,29 @@ class App(ctk.CTk):
         self.resizable(True, True)
         self.minsize(640, 620)
 
-        # Taskbar icon fix (Windows)
+        # Taskbar icon fix (Windows only)
+        import sys
+        if sys.platform.startswith("win"):
+            try:
+                myappid = u"antigravity.aidatatool.v1"
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+            except Exception:
+                pass
+
+        # Window icon (cross-platform: .ico on Windows, .png on Linux/Ubuntu)
         try:
-            myappid = u"antigravity.aidatatool.v1"
-            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+            if sys.platform.startswith("win"):
+                icon_path = resource_path("icon.ico")
+                if Path(icon_path).exists():
+                    self.iconbitmap(icon_path)
+            else:
+                icon_path = resource_path("icon.png")
+                if Path(icon_path).exists():
+                    from PIL import ImageTk
+                    icon_img = ImageTk.PhotoImage(file=icon_path)
+                    self.iconphoto(False, icon_img)
         except Exception:
             pass
-        
-        # Window icon
-        icon_path = resource_path("icon.ico")
-        if Path(icon_path).exists():
-            self.iconbitmap(icon_path)
 
         # Header
         header = ctk.CTkLabel(

@@ -118,26 +118,59 @@ python main.py
 | `albumentations` | Augmentation chuyên dụng cho CV |
 | `numpy` | Xử lý ma trận ảnh |
 | `Pillow` | Hỗ trợ định dạng ảnh |
+| `ultralytics` | Mô hình YOLO cho tính năng Auto Label |
 
 ---
 
-## 📦 Đóng gói ứng dụng (.exe)
+## 🐧 Hướng dẫn chạy trên Ubuntu / Linux
 
-Ứng dụng có thể được đóng gói thành một file `.exe` duy nhất (One File) để dễ dàng phân phối.
+### 1. Cài đặt thư viện hệ thống cần thiết
+Trên Ubuntu, Python không đi kèm sẵn `tkinter` và OpenCV yêu cầu các thư viện đồ họa hệ thống:
+```bash
+sudo apt update
+sudo apt install -y python3-tk libgl1 libglib2.0-0 python3-pip python3-venv
+```
 
-### Yêu cầu
-- Đã cài đặt đầy đủ các thư viện trong `requirements.txt`.
-- Đã cài đặt PyInstaller: `pip install pyinstaller`.
+### 2. Thiết lập môi trường và chạy ứng dụng
+Chạy nhanh bằng script tự động:
+```bash
+chmod +x setup_ubuntu.sh run.sh build.sh
+./setup_ubuntu.sh
+./run.sh
+```
+Hoặc chạy thủ công:
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python3 main.py
+```
 
-### Các bước thực hiện
+*Lưu ý:* Cần chạy trên môi trường có giao diện đồ họa Desktop (X11 / Wayland).
+
+---
+
+## 📦 Đóng gói ứng dụng (Windows & Ubuntu)
+
+### Trên Windows (`.exe`):
 1. Đảm bảo file `icon.ico` có mặt trong thư mục gốc.
 2. Chạy file script tự động:
    ```cmd
    .\build.bat
    ```
-3. Sau khi quá trình build hoàn tất (mất khoảng 1-2 phút), file setup sẽ nằm trong thư mục:
-   - `dist/AIDataTool.exe`
+3. File sau khi build nằm tại: `dist/AIDataTool.exe`.
+
+### Trên Ubuntu (Linux binary):
+*Lưu ý: PyInstaller không hỗ trợ cross-compile chéo OS. Để tạo file thực thi cho Ubuntu, bạn cần build trực tiếp trên máy Ubuntu:*
+1. Chạy file script:
+   ```bash
+   ./build.sh
+   ```
+2. File thực thi độc lập (ELF binary) sẽ nằm tại: `dist/AIDataTool`.
+3. Chạy file: `./dist/AIDataTool`.
+
+---
 
 ### Lưu ý kỹ thuật
-- Script sử dụng tham số `--onefile` để nén tất cả code và thư viện vào một file duy nhất.
-- Hàm `resource_path()` trong `main.py` đảm bảo các tài nguyên đi kèm (như icon) được truy xuất chính xác từ thư mục tạm khi chạy file `.exe`.
+- `main.py` đã được cấu hình tự động nhận diện hệ điều hành (`sys.platform`): dùng `icon.ico` trên Windows và `icon.png` (thông qua `iconphoto`) trên Ubuntu/Linux.
+- Hàm `resource_path()` đảm bảo tài nguyên đi kèm được load chính xác cả khi chạy source code lẫn khi đóng gói PyInstaller.

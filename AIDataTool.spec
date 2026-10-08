@@ -1,7 +1,9 @@
 # -*- mode: python ; coding: utf-8 -*-
+import sys
+import os
 from PyInstaller.utils.hooks import collect_data_files
 
-datas = [('core', 'core'), ('icon.ico', '.')]
+datas = [('core', 'core'), ('icon.ico', '.'), ('icon.png', '.')]
 datas += collect_data_files('customtkinter')
 datas += collect_data_files('ultralytics')
 
@@ -40,5 +42,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['icon.ico'],
+    icon=['icon.ico'] if sys.platform.startswith('win') else None,
 )
