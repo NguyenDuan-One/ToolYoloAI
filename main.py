@@ -12,6 +12,26 @@ Built with CustomTkinter for a modern look.
 All heavy work runs in background threads to keep the UI responsive.
 """
 
+import sys
+import os
+
+# ---------------------------------------------------------------------------
+# Linux / X11 Multi-threading & Headless Fix (MUST be at the very top)
+# Prevents "[xcb] Unknown sequence number while appending request" assertion crash
+# ---------------------------------------------------------------------------
+if not sys.platform.startswith("win"):
+    # 1. Initialize X11 threads before Tkinter or OpenCV can initialize display
+    try:
+        import ctypes
+        x11 = ctypes.cdll.LoadLibrary("libX11.so.6")
+        x11.XInitThreads()
+    except Exception:
+        pass
+
+    # 2. Prevent OpenCV/Qt conflicts with Tkinter on Linux
+    os.environ.setdefault("QT_X11_NO_MITSHM", "1")
+    os.environ.setdefault("OPENCV_VIDEOIO_PRIORITY_MSMF", "0")
+
 import threading
 import ctypes
 import tkinter as tk
